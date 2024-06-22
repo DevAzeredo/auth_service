@@ -1,4 +1,4 @@
-use crate::api::controllers::user_handler::create_user_handler;
+use crate::api::controllers::user_handler::{create_user_handler, login_user_handler};
 use crate::api::middleware::ServiceContextMaintenanceCheck;
 use crate::container::Container;
 use actix_web::body::MessageBody;
@@ -26,5 +26,11 @@ pub fn create_app() -> App<
         .app_data(web::Data::from(service_context_service.clone()))
         .wrap(Logger::default())
         .wrap(ServiceContextMaintenanceCheck)
-        .service(web::scope("/auth").route("/register", web::post().to(create_user_handler)))
+        .service(
+            web::scope("/auth")
+                .route("/register", web::post().to(create_user_handler))
+                .route("/login", web::post().to(login_user_handler)),
+        )
+    // tem que validar no header na vdd
+    // .route("/validate", web::post().to(validate_token_handler)
 }

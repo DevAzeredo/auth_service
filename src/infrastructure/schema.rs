@@ -8,15 +8,6 @@ diesel::table! {
 }
 
 diesel::table! {
-    todos (id) {
-        id -> Int4,
-        title -> Varchar,
-        description -> Text,
-        completed -> Bool,
-    }
-}
-
-diesel::table! {
     users (id) {
         id -> Int4,
         username -> Varchar,
@@ -26,8 +17,4 @@ diesel::table! {
     }
 }
 
-diesel::allow_tables_to_appear_in_same_query!(
-    service_contexts,
-    todos,
-    users,
-);
+diesel::allow_tables_to_appear_in_same_query!(service_contexts, users,);
