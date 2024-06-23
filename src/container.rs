@@ -12,11 +12,9 @@ pub struct Container {
     pub service_context_service: Arc<dyn ServiceContextService>,
     pub user_service: Arc<dyn UserService>,
 }
-
 impl Container {
     pub fn new() -> Self {
         let db_pool = db_pool();
-
         let user_repository: Arc<dyn UserRepository> =
             Arc::new(UserDieselRepository::new(Arc::new(db_pool.clone())));
         let token_service = Arc::new(TokenServiceImpl {});
@@ -26,7 +24,6 @@ impl Container {
         });
         let service_context_service =
             Arc::new(ServiceContextServiceImpl::new(Arc::new(db_pool.clone())));
-
         Container {
             service_context_service,
             user_service,

@@ -1,10 +1,13 @@
-use crate::domain::error::CommonError;
-use crate::domain::models::token::Claim;
-use crate::domain::services::token::TokenService;
+use std::env;
+
 use async_trait::async_trait;
 use chrono::{Duration, Utc};
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
-use std::env;
+
+use crate::domain::constants::SECRET_KEY_TOKEN;
+use crate::domain::error::CommonError;
+use crate::domain::models::token::Claim;
+use crate::domain::services::token::TokenService;
 
 #[derive(Clone)]
 pub struct TokenServiceImpl {}
@@ -17,24 +20,28 @@ impl TokenService for TokenServiceImpl {
             sub: user_id.to_string(),
             exp: expiration.timestamp(),
         };
-        let secret_key = env::var("SECRET_KEY").expect("SECRET_KEY must be set");
+        let secret_key = env::var(SECRET_KEY_TOKEN).expect("SECRET_KEY must be set");
         Ok(encode(
             &Header::default(),
             &claim,
             &EncodingKey::from_secret(secret_key.as_ref()),
         )?)
     }
-
-    async fn validate(&self, token: String) -> Result<String, CommonError> {
-        let secret_key = env::var("SECRET_KEY").expect("SECRET_KEY must be set");
+    async fn validate(&self, token: String) -> Result<Claim, CommonError> {
+        let secret_key = env::var(SECRET_KEY_TOKEN).expect("SECRET_KEY must be set");
         let token_data = decode::<Claim>(
             &*token,
             &DecodingKey::from_secret(secret_key.as_ref()),
             &Validation::default(),
         )?;
-        Ok(format!(
-            "sub: {}, exp: {}",
-            token_data.claims.sub, token_data.claims.exp
-        ))
+
+        let now = Utc::now().timestamp();
+        if token_data.claims.exp < now {
+            return Err(CommonError {
+                message: "Token has expired".to_string(),
+                code: 401,
+            });
+        }
+        Ok(token_data.claims)
     }
 }

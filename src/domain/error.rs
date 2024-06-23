@@ -1,4 +1,3 @@
-use bcrypt::BcryptError;
 use serde::Serialize;
 
 #[derive(Debug, Serialize)]
@@ -10,15 +9,6 @@ pub struct CommonError {
 impl std::fmt::Display for CommonError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "Error: {}, Code: {}", self.message, self.code)
-    }
-}
-
-impl From<BcryptError> for CommonError {
-    fn from(error: BcryptError) -> Self {
-        CommonError {
-            message: format!("Bcrypt error: {}", error),
-            code: 500,
-        }
     }
 }
 
@@ -56,6 +46,7 @@ impl Into<CommonError> for RepositoryError {
         }
     }
 }
+
 impl From<jsonwebtoken::errors::Error> for CommonError {
     fn from(error: jsonwebtoken::errors::Error) -> Self {
         CommonError {

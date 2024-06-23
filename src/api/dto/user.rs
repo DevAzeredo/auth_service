@@ -1,6 +1,7 @@
-use crate::domain::models::user::{CreateUser, LoginUser, User};
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
+
+use crate::domain::models::user::{CreateUser, LoginUser, User};
 
 #[derive(Deserialize, Serialize)]
 pub struct CreateUserDTO {
@@ -8,6 +9,7 @@ pub struct CreateUserDTO {
     pub password: String,
     pub email: String,
 }
+
 impl Into<CreateUser> for CreateUserDTO {
     fn into(self) -> CreateUser {
         CreateUser {
@@ -29,6 +31,11 @@ impl Into<CreateUserDTO> for CreateUser {
 }
 
 #[derive(Deserialize, Serialize)]
+pub struct TokenDTO {
+    pub token: String,
+}
+
+#[derive(Deserialize, Serialize)]
 pub struct LoginUserDTO {
     pub username: String,
     pub password: String,
@@ -42,6 +49,7 @@ impl Into<LoginUser> for LoginUserDTO {
         }
     }
 }
+
 impl Into<LoginUserDTO> for LoginUser {
     fn into(self) -> LoginUserDTO {
         LoginUserDTO {

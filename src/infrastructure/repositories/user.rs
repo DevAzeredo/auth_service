@@ -1,7 +1,8 @@
+use std::sync::Arc;
+
 use actix_threadpool::run;
 use async_trait::async_trait;
 use diesel::prelude::*;
-use std::sync::Arc;
 
 use crate::domain::models::user::{CreateUser, LoginUser, User};
 use crate::domain::repositories::repository::RepositoryResult;
